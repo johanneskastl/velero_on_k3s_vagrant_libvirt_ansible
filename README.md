@@ -17,21 +17,6 @@ Please be aware, that this might break the Ansible provisioning.
    see your server.
 1. Party!
 
-## Disabling the Ansible provisioning
-
-In case you do not want Ansible to install k3s (because you want to install it
-yourself), just comment out the following lines in the `Vagrantfile`:
-
-```
-    node.vm.provision "ansible" do |ansible|
-      ansible.compatibility_mode = "2.0"
-      ansible.groups = {
-        "k3s"  => [ "k3s1" ]
-      }
-      ansible.playbook = "ansible/playbook-vagrant.yml"
-    end # node.vm.provision
-```
-
 ## Cleaning up
 
 The VMs can be torn down after playing around using `vagrant destroy`. This will
