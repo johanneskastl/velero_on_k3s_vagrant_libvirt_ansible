@@ -1,0 +1,55 @@
+---
+
+- name: 'Install the MinIO operator'
+  hosts: 'k3s1'
+  gather_facts: true
+  become: false
+  module_defaults:
+    kubernetes.core.helm:
+      kubeconfig: './k3s-kubeconfig'
+    kubernetes.core.k8s:
+      kubeconfig: './k3s-kubeconfig'
+    kubernetes.core.k8s_info:
+      kubeconfig: './k3s-kubeconfig'
+
+  tasks:
+
+    - name: 'Create the minio-operator namespace'
+      delegate_to: 'localhost'
+      kubernetes.core.k8s:
+        name: 'minio-operator'
+        api_version: 'v1'
+        kind: 'Namespace'
+        state: 'present'
+
+    - name: 'Install the MinIO operator via the helm chart'
+      delegate_to: 'localhost'
+      kubernetes.core.helm:
+        chart_repo_url: 'https://operator.min.io'
+        release_name: 'minio-operator'
+        chart_ref: 'operator'
+        release_namespace: 'minio-operator'
+        values:
+          console:
+            ingress:
+              enabled: true
+              host: "minio-console.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
+
+    - name: 'Find out the token for the MinIO console'
+      delegate_to: 'localhost'
+      kubernetes.core.k8s_info:
+        api_version: 'v1'
+        kind: 'secret'
+        name: 'console-sa-secret'
+        namespace: 'minio-operator'
+      register: minio_console_token
+
+    - name: 'Output console URL'
+      delegate_to: 'localhost'
+      ansible.builtin.debug:
+        msg: "The MinIO operator console is reachable at minio-console.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
+
+    - name: 'Output the token for the MinIO console'
+      delegate_to: 'localhost'
+      ansible.builtin.debug:
+        msg: "The MinIO operator console token is: {{ minio_console_token.resources[0].data.token | b64decode }}"
