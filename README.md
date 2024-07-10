@@ -1,7 +1,9 @@
-# k3s_vagrant_libvirt_ansible
+# velero_on_k3s_vagrant_libvirt_ansible
 
 Vagrant-libvirt setup that creates a VM with [k3s](https://k3s.io/), the minimal
 lightweight Kubernetes distribution.
+
+On top of k3s, Ansible installs [velero](https://velero.io/).
 
 Default OS is openSUSE Leap 15.6, but that can be changed in the Vagrantfile.
 Please be aware, that this might break the Ansible provisioning.
