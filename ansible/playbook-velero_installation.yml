@@ -1,0 +1,85 @@
+---
+
+- name: 'Install Velero'
+  hosts: 'k3s1'
+  gather_facts: true
+  become: false
+  module_defaults:
+    kubernetes.core.helm:
+      kubeconfig: './k3s-kubeconfig'
+    kubernetes.core.k8s:
+      kubeconfig: './k3s-kubeconfig'
+    kubernetes.core.k8s_info:
+      kubeconfig: './k3s-kubeconfig'
+
+  tasks:
+
+    - name: 'Create the velero namespace'
+      delegate_to: 'localhost'
+      kubernetes.core.k8s:
+        name: 'velero'
+        api_version: 'v1'
+        kind: 'Namespace'
+        state: 'present'
+
+    - name: 'Create the velero secret for talking to MinIO'
+      delegate_to: 'localhost'
+      kubernetes.core.k8s:
+        state: 'present'
+        resource_definition: |
+          metadata:
+            name: 'velero-minio-credentials'
+            namespace: 'velero'
+          api_version: 'v1'
+          kind: 'Secret'
+          stringData:
+            cloud: |
+              [default]
+              aws_access_key_id = minio-vagrant-libvirt-user
+              aws_secret_access_key = secret123
+
+    - name: 'Install Velero via the helm chart'
+      delegate_to: 'localhost'
+      kubernetes.core.helm:
+        chart_repo_url: https://vmware-tanzu.github.io/helm-charts
+        chart_ref: velero
+        release_name: velero
+        release_namespace: velero
+        release_values:
+          snapshotsEnabled: false
+          credentials:
+            existingSecret: velero-minio-credentials
+          configuration:
+            backupStorageLocation:
+              - name: minio
+                provider: aws
+                bucket: vagrant-libvirt-test1
+                config:
+                  region: minio
+                  s3ForcePathStyle: true
+                  s3Url: http://minio.minio-tenant.svc:9000
+            # volumeSnapshotLocation:
+            #   - name: <VOLUME SNAPSHOT LOCATION NAME>
+            #     provider: minio
+            #     config:
+            #       region: minio
+          initContainers:
+            - name: velero-plugin-for-aws
+              image: velero/velero-plugin-for-aws:v1.10.0
+              volumeMounts:
+                - mountPath: /target
+                  name: plugins
+
+    - name: 'Wait until all pods are running'
+      delegate_to: 'localhost'
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: velero
+      register: pod_list
+      until: |
+        pod_list | json_query("resources[*].status.phase") | unique | sort == ["Running"]
+        or
+        pod_list | json_query("resources[*].status.phase") | unique | sort == ["Running", "Succeeded"]
+      retries: 12
+      delay: 10
