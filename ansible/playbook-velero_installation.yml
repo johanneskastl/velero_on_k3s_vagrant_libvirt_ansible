@@ -53,6 +53,7 @@
             backupStorageLocation:
               - name: minio
                 provider: aws
+                default: true
                 bucket: vagrant-libvirt-test1
                 config:
                   region: minio
