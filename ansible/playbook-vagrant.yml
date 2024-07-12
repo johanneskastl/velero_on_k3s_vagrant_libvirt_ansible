@@ -11,3 +11,6 @@
 
 - name: 'Run playbook-minio_tenant.yml'
   ansible.builtin.import_playbook: playbook-minio_tenant.yml
+
+- name: 'Run playbook-velero_installation.yml'
+  ansible.builtin.import_playbook: playbook-velero_installation.yml
