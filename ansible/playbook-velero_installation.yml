@@ -58,7 +58,7 @@
                 config:
                   region: minio
                   s3ForcePathStyle: true
-                  s3Url: http://minio.minio-tenant.svc:9000
+                  s3Url: http://minio.minio-tenant.svc
           initContainers:
             - name: velero-plugin-for-aws
               image: velero/velero-plugin-for-aws:v1.10.0
