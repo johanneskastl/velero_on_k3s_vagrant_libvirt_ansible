@@ -47,6 +47,7 @@
         release_namespace: velero
         release_values:
           snapshotsEnabled: false
+          deployNodeAgent: true
           credentials:
             existingSecret: velero-minio-credentials
           configuration:
