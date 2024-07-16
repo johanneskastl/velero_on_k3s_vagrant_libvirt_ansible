@@ -59,7 +59,7 @@
                 config:
                   region: minio
                   s3ForcePathStyle: true
-                  s3Url: http://minio.minio-tenant.svc
+                  s3Url: "http://minio-api.tenant.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
           initContainers:
             - name: velero-plugin-for-aws
               image: velero/velero-plugin-for-aws:v1.10.0
