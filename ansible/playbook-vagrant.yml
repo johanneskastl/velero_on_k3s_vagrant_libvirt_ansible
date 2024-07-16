@@ -14,3 +14,6 @@
 
 - name: 'Run playbook-velero_installation.yml'
   ansible.builtin.import_playbook: playbook-velero_installation.yml
+
+- name: 'Run playbook-s3cmd_script.yml'
+  ansible.builtin.import_playbook: playbook-s3cmd_script.yml
