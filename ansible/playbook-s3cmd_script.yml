@@ -1,0 +1,22 @@
+---
+
+- name: 'Create s3cmd script'
+  hosts: 'k3s1'
+  gather_facts: true
+  become: false
+  module_defaults:
+    kubernetes.core.helm:
+      kubeconfig: './k3s-kubeconfig'
+    kubernetes.core.k8s:
+      kubeconfig: './k3s-kubeconfig'
+    kubernetes.core.k8s_info:
+      kubeconfig: './k3s-kubeconfig'
+
+  tasks:
+
+    - name: 'Create script'
+      delegate_to: 'localhost'
+      ansible.builtin.template:
+        src: 's3cmd_list_bucket.sh.j2'
+        dest: "{{ playbook_dir }}/s3cmd_list_bucket.sh"
+        mode: '0755'
