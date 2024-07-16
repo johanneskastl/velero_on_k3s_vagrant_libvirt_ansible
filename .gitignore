@@ -6,3 +6,6 @@ Vagrantfile.1
 
 # ignore kubeconfig fetched from the machine
 ansible/k3s-kubeconfig
+
+# ignore s3cmd script
+ansible/s3cmd_list_bucket.sh
