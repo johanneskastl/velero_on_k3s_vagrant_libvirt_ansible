@@ -51,6 +51,13 @@
           ingress:
             enabled: true
             hostname: "nginx-pvc2.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
+          initContainers:
+            - name: init-myservice
+              image: busybox:1.28
+              command: ['sh', '-c', "date > /app/index.html"]
+              volumeMounts:
+              - mountPath: /app
+                name: staticsite
 
     #
     # nginx-pvc1
@@ -87,6 +94,13 @@
           ingress:
             enabled: true
             hostname: "nginx-pvc1.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
+          initContainers:
+            - name: init-myservice
+              image: busybox:1.28
+              command: ['sh', '-c', "date > /app/index.html"]
+              volumeMounts:
+              - mountPath: /app
+                name: staticsite
 
     - name: 'Wait until all pods are running'
       delegate_to: 'localhost'
