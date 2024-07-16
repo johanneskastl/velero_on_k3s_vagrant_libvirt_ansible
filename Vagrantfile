@@ -32,6 +32,11 @@ Vagrant.configure("2") do |config|
       trigger.run = {inline: "rm -vf ansible/k3s-kubeconfig"}
     end # node.trigger.after
 
+    node.trigger.after :destroy do |trigger|
+      trigger.warn = "Removing ansible/s3cmd_list_bucket.sh"
+      trigger.run = {inline: "rm -vf ansible/s3cmd_list_bucket.sh"}
+    end # node.trigger.after
+
   end # config.vm.define servers
 
 end # Vagrant.configure
