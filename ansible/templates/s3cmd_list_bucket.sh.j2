@@ -1,0 +1,8 @@
+#!/bin/bash
+
+s3cmd \
+    --access_key=minio-vagrant-libvirt-user \
+    --secret_key=secret123 \
+    --host=http://minio-api.tenant.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io \
+    --no-ssl \
+    ls s3://vagrant-libvirt-test1/
