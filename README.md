@@ -76,6 +76,19 @@ Please be aware, that this might break the Ansible provisioning.
    $
    ```
 
+1. Create a schedule:
+
+   ```
+   $ velero --kubeconfig ansible/k3s-kubeconfig schedule create nginx2-schedule --schedule="*/5 * * * *" --selector app.kubernetes.io/instance=nginx-pvc2
+   Schedule "nginx2-schedule" created successfully
+   $ velero --kubeconfig ansible/k3s-kubeconfig schedule get
+   NAME              STATUS    CREATED                          SCHEDULE      BACKUP TTL   LAST BACKUP   SELECTOR                                PAUSED
+   nginx2-schedule   Enabled   2024-07-16 09:56:50 +0200 CEST   */5 * * * *   0s           n/a           app.kubernetes.io/instance=nginx-pvc2   false
+   $
+   ```
+
+1. Wait for the schedule to run the backup, then delete the nginx-pvc2 helm
+   release and restore from the backup.
 1. Party!
 
 ## Cleaning up
