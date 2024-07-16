@@ -17,42 +17,8 @@
   tasks:
 
     #
-    # create directories for PVs
-    #
-
-    - name: 'Create directories'
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: 'directory'
-        owner: 'root'
-        group: 'root'
-        mode: '0755'
-      become: true
-      loop:
-        - '/mnt/data_nginx-pvc1'
-        - '/mnt/data_nginx-pvc2'
-
-    #
     # nginx-pvc2
     #
-
-    - name: 'Create PV nginx-pv2'
-      delegate_to: 'localhost'
-      kubernetes.core.k8s:
-        state: 'present'
-        resource_definition: |
-          apiVersion: v1
-          kind: PersistentVolume
-          metadata:
-            name: nginx-pv2
-          spec:
-            storageClassName: nginx-pv2
-            capacity:
-              storage: 100Mi
-            accessModes:
-              - ReadWriteOnce
-            hostPath:
-              path: "/mnt/data_nginx-pv2"
 
     - name: 'Create PVC nginx-pvc2'
       delegate_to: 'localhost'
@@ -65,7 +31,7 @@
             name: nginx-pvc2
             namespace: default
           spec:
-            storageClassName: nginx-pv2
+            storageClassName: local-path
             accessModes:
               - ReadWriteOnce
             resources:
@@ -90,34 +56,6 @@
     # nginx-pvc1
     #
 
-    - name: 'Create index.html in /mnt/data_nginx-pvc1/index.html'
-      ansible.builtin.copy:
-        dest: '/mnt/data_nginx-pvc1/index.html'
-        content: |
-          Hello from vagrant-libvirt
-        owner: 'root'
-        group: 'root'
-        mode: '0644'
-      become: true
-
-    - name: 'Create PV nginx-pv1'
-      delegate_to: 'localhost'
-      kubernetes.core.k8s:
-        state: 'present'
-        resource_definition: |
-          apiVersion: v1
-          kind: PersistentVolume
-          metadata:
-            name: nginx-pv1
-          spec:
-            storageClassName: nginx-pv1
-            capacity:
-              storage: 100Mi
-            accessModes:
-              - ReadWriteOnce
-            hostPath:
-              path: "/mnt/data_nginx-pvc1"
-
     - name: 'Create PVC nginx-pvc1'
       delegate_to: 'localhost'
       kubernetes.core.k8s:
@@ -129,7 +67,7 @@
             name: nginx-pvc1
             namespace: default
           spec:
-            storageClassName: nginx-pv1
+            storageClassName: local-path
             accessModes:
               - ReadWriteOnce
             resources:
