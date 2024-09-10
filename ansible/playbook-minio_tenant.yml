@@ -58,13 +58,11 @@
         release_name: 'minio-tenant'
         chart_ref: 'tenant'
         release_namespace: 'minio-tenant'
-        values:
-          secrets:
-            name: 'minio-vagrant-libvirt-env-configuration'
-            accessKey: 'minio-vagrant-libvirt'
-            secretKey: 'minio123'
+        release_values:
           tenant:
             name: 'minio-vagrant-libvirt'
+            configSecret:
+              existingSecret: true
             configuration:
               name: 'minio-vagrant-libvirt-env-configuration'
             pools:
