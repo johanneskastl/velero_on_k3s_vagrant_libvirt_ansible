@@ -36,6 +36,21 @@
             CONSOLE_ACCESS_KEY: minio-vagrant-libvirt-user
             CONSOLE_SECRET_KEY: secret123
 
+    - name: 'Create the MinIO tenant configuration secret'
+      delegate_to: 'localhost'
+      kubernetes.core.k8s:
+        state: 'present'
+        resource_definition: |
+          metadata:
+            name: 'minio-vagrant-libvirt-env-configuration'
+            namespace: 'minio-tenant'
+          api_version: 'v1'
+          kind: 'Secret'
+          stringData:
+            config.env: |-
+              export MINIO_ROOT_USER="minio-vagrant-libvirt"
+              export MINIO_ROOT_PASSWORD="minio123"
+
     - name: 'Install the MinIO tenant via the helm chart'
       delegate_to: 'localhost'
       kubernetes.core.helm:
