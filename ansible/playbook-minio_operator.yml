@@ -29,3 +29,6 @@
         release_name: 'minio-operator'
         chart_ref: 'operator'
         release_namespace: 'minio-operator'
+        release_values:
+          operator:
+            replicaCount: 1
