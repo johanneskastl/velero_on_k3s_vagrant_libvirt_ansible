@@ -83,6 +83,16 @@
               enabled: true
               host: "minio-console.tenant.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
 
+    - name: 'Wait for the Minio console URL to be available'
+      delegate_to: 'localhost'
+      ansible.builtin.uri:
+        url: "http://minio-console.tenant.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
+        validate_certs: false
+      register: result
+      until: "result.status == 200"
+      retries: 31
+      delay: 10
+
     - name: 'Output API URL'
       delegate_to: 'localhost'
       ansible.builtin.debug:
@@ -91,7 +101,7 @@
     - name: 'Output console URL'
       delegate_to: 'localhost'
       ansible.builtin.debug:
-        msg: "The MinIO tenant console is reachable at minio-console.tenant.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
+        msg: "The MinIO tenant console is reachable at http://minio-console.tenant.{{ hostvars['k3s1']['ansible_default_ipv4']['address'] }}.sslip.io"
 
     - name: 'Output tenant credentials'
       delegate_to: 'localhost'
