@@ -1,5 +1,8 @@
 ---
 
+- name: 'Run playbook-bootstrap_python.yml'
+  ansible.builtin.import_playbook: playbook-bootstrap_python.yml
+
 - name: 'Run playbook-install_k3s.yml'
   ansible.builtin.import_playbook: playbook-install_k3s.yml
 
