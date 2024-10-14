@@ -58,8 +58,8 @@
               image: busybox:1.28
               command: ['sh', '-c', "date > /app/index.html"]
               volumeMounts:
-              - mountPath: /app
-                name: staticsite
+                - mountPath: /app
+                  name: staticsite
 
     #
     # nginx-pvc1
@@ -103,8 +103,8 @@
               image: busybox:1.28
               command: ['sh', '-c', "date > /app/index.html"]
               volumeMounts:
-              - mountPath: /app
-                name: staticsite
+                - mountPath: /app
+                  name: staticsite
 
     - name: 'Wait until all pods are running'
       delegate_to: 'localhost'
